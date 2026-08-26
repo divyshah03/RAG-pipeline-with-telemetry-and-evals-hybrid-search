@@ -33,8 +33,16 @@ async def rag_ingest_pdf(ctx: inngest.Context):
         chunks = load_and_chunk_pdf(pdf_path)
         return RAGChunkAndSrc(chunks = chunks, source_id = source_id)
 
+    def _upsert(chunks_and_src: RAGChunkAndSrc) -> RAGUpsertresult:
+        chunks = chunks_and_src.chunks
+        source_id = chunks_and_src.source_id
+        vecs = embed_texts(chunks)
+        ids = [str(uuid.uuid5(uuid.NAMESPACE_URL, f"{source_id}:{i}")) for i in range(len(chunks))]
+        payloads = [{"source": source_id, "text": chunks[i]} for i in range(len(chunks))]
+    
     chunks_and_src = await ctx.step.run("load-and-chunk", lambda: _load(ctx), output_type = RAGChunkAndSrc)
-    return chunks_and_src.model_dump()
+    ingested = await ctx.step.run("embed-and-upsert", lambda: _upsert(chunks_and_src), output_type = RAGUpsertresult)
+    return ingested.model_dump()
 
 app = FastAPI()
 
