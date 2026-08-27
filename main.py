@@ -71,7 +71,27 @@ async def rag_query_pdf_ai(ctx: inngest.Context):
         "Answer concisely using the context above."
     )
 
-    
+    adapter = ai.openai.adapter(
+        auth_key = os.getenv("OPENAI_API_KEY"),
+        model = "gpt-4o-mini",
+    )
+
+    res = await ctx.step.ai.infer(
+        "llm-answer",
+        adapter = adapter,
+        body = {
+            "max_tokens": 1024,
+            "temperature": 0.2,
+            "messages": [
+                {"role": "system", "content": "You answer questions using only the provided context."},
+                {"role": "user", "content": user_context}
+            ]
+        }
+    )
+
+    answer = res["choices"][0]["message"]["content"].strip()
+    return {"answer": answer, "sources": found.sources, "num_contexts": len(found.contexts)}
+
 
     
 app = FastAPI()
