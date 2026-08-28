@@ -56,7 +56,7 @@ async def rag_query_pdf_ai(ctx: inngest.Context):
         query_vec = embed_texts([question])[0]
         store = QdrantStorage()
         found = store.search(query_vec, top_k)
-        return RAGSearchResult(contexts = found["contexts"], scores = found["scores"])
+        return RAGSearchResult(contexts = found["contexts"], scores = found["scores"], sources = found["sources"])
 
     question = ctx.event.data["question"]
     top_k = int(ctx.event.data.get("top_k", 5))
