@@ -71,7 +71,7 @@ async def rag_query_pdf_ai(ctx: inngest.Context):
         "Answer concisely using the context above."
     )
 
-    adapter = ai.openai.adapter(
+    adapter = ai.openai.Adapter(
         auth_key = os.getenv("OPENAI_API_KEY"),
         model = "gpt-4o-mini",
     )
