@@ -24,7 +24,8 @@ inngest_client = inngest.Inngest(
 
 @inngest_client.create_function(
     fn_id = "RAG: Ingest PDF",
-    trigger = inngest.TriggerEvent(event = "rag/ingest_pdf")
+    trigger = inngest.TriggerEvent(event = "rag/ingest_pdf"),
+    throttle = inngest.Throttle(count = 2, period = datetime.timedelta(minutes = 1))
 )
 async def rag_ingest_pdf(ctx: inngest.Context):
     def _load(ctx: inngest.Context) -> RAGChunkAndSrc:
