@@ -10,17 +10,17 @@ import requests
 
 load_dotenv()
 
-st.set_page_config(page_title="RAG Ingest PDF", page_icon="📄", layout="centered")
+st.set_page_config(page_title = "RAG Ingest PDF", page_icon = "📄", layout = "centered")
 
 
 @st.cache_resource
 def get_inngest_client() -> inngest.Inngest:
-    return inngest.Inngest(app_id="rag_app", is_production=False)
+    return inngest.Inngest(app_id = "rag_app", is_production = False)
 
 
 def save_uploaded_pdf(file) -> Path:
     uploads_dir = Path("uploads")
-    uploads_dir.mkdir(parents=True, exist_ok=True)
+    uploads_dir.mkdir(parents = True, exist_ok = True)
     file_path = uploads_dir / file.name
     file_bytes = file.getbuffer()
     file_path.write_bytes(file_bytes)
@@ -31,7 +31,7 @@ async def send_rag_ingest_event(pdf_path: Path) -> None:
     client = get_inngest_client()
     await client.send(
         inngest.Event(
-            name="rag/ingest_pdf",
+            name = "rag/ingest_pdf",
             data={
                 "pdf_path": str(pdf_path.resolve()),
                 "source_id": pdf_path.name,
@@ -41,7 +41,7 @@ async def send_rag_ingest_event(pdf_path: Path) -> None:
 
 
 st.title("Upload a PDF to Ingest")
-uploaded = st.file_uploader("Choose a PDF", type=["pdf"], accept_multiple_files=False)
+uploaded = st.file_uploader("Choose a PDF", type = ["pdf"], accept_multiple_files = False)
 
 if uploaded is not None:
     with st.spinner("Uploading and triggering ingestion..."):
@@ -61,7 +61,7 @@ async def send_rag_query_event(question: str, top_k: int) -> None:
     client = get_inngest_client()
     result = await client.send(
         inngest.Event(
-            name="rag/query_pdf_ai",
+            name = "rag/query_pdf_ai",
             data={
                 "question": question,
                 "top_k": top_k,
@@ -105,7 +105,7 @@ def wait_for_run_output(event_id: str, timeout_s: float = 120.0, poll_interval_s
 
 with st.form("rag_query_form"):
     question = st.text_input("Your question")
-    top_k = st.number_input("How many chunks to retrieve", min_value=1, max_value=20, value=5, step=1)
+    top_k = st.number_input("How many chunks to retrieve", min_value = 1, max_value = 20, value = 5, step = 1)
     submitted = st.form_submit_button("Ask")
 
     if submitted and question.strip():
