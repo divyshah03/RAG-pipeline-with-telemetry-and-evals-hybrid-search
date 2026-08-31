@@ -26,6 +26,7 @@ class QdrantStorage:
         contexts = []
         sources = set()
         scores = []
+        retrieved = []
 
         for r in results.points:
             payload = getattr(r, "payload", None) or {}
@@ -35,7 +36,8 @@ class QdrantStorage:
                   contexts.append(text)
                   sources.add(source)
                   scores.append(r.score)
-        return {"contexts": contexts,"sources": list(sources), "scores": scores}
+                  retrieved.append({"text": text, "source": source, "score": r.score})
+        return {"contexts": contexts,"sources": list(sources), "scores": scores, "retrieved": retrieved}
 
           
 
