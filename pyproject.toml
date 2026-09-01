@@ -24,6 +24,11 @@ dependencies = [
 requires = ["uv_build>=0.12.2,<0.13.0"]
 build-backend = "uv_build"
 
+# The importable package is `app/` at the repo root rather than the default `src/<project-name>/`.
+[tool.uv.build-backend]
+module-name = "app"
+module-root = ""
+
 [dependency-groups]
 dev = [
     "fpdf2>=2.8.8",
