@@ -37,16 +37,16 @@ Streamlit UI (streamlit_app.py)
     ├─ Upload PDF ──► save to uploads/ ──► Inngest event: rag/ingest_pdf
     │                                              │
     │                                              ▼
-    │                                    FastAPI + Inngest (main.py)
+    │                                    FastAPI + Inngest (app/main.py)
     │                                    rag_ingest_pdf:
-    │                                      1. load-and-chunk   (data_loader)
-    │                                      2. embed-and-upsert (data_loader + vector_db)
+    │                                      1. load-and-chunk   (app/data_loader)
+    │                                      2. embed-and-upsert (app/data_loader + app/vector_db)
     │
     └─ Ask question ──► Inngest event: rag/query_pdf_ai
                                │
                                ▼
                          rag_query_pdf_ai:
-                           1. embed-and-search (data_loader + vector_db)
+                           1. embed-and-search (app/data_loader + app/vector_db)
                            2. llm-answer       (OpenAI via Inngest AI)
                                │
                                ▼
@@ -139,7 +139,7 @@ Dashboard: http://127.0.0.1:8288
 ### 5. Start the FastAPI backend
 
 ```bash
-uv run uvicorn main:app
+uv run uvicorn app.main:app
 ```
 
 API: http://127.0.0.1:8000
@@ -200,32 +200,34 @@ uv run python eval/eval_harness.py --run-label hybrid-retrieval
 
 ```
 RAGProductionApp/
-├── main.py                 # FastAPI app + Inngest ingest/query functions
-├── streamlit_app.py        # Upload + query UI
-├── data_loader.py          # PDF loading, chunking, OpenAI embeddings
-├── vector_db.py            # Qdrant wrapper (upsert, search)
-├── custom_types.py         # Pydantic models for Inngest step I/O
+├── app/                        # Importable application package
+│   ├── __init__.py
+│   ├── main.py                 # FastAPI app + Inngest ingest/query functions
+│   ├── data_loader.py          # PDF loading, chunking, OpenAI embeddings
+│   ├── vector_db.py            # Qdrant wrapper (upsert, search)
+│   └── custom_types.py         # Pydantic models for Inngest step I/O
+├── streamlit_app.py            # Upload + query UI
 ├── eval/
-│   ├── eval_harness.py     # Automated eval runner
+│   ├── eval_harness.py         # Automated eval runner
 │   ├── generate_sample_pdfs.py
 │   ├── dataset/qa_dataset.json
-│   ├── pdfs/               # Sample documents for eval
-│   └── results/            # Eval output (gitignored)
-├── pyproject.toml          # Dependencies (uv)
-├── uv.lock                 # Locked dependency versions
-├── uploads/                # User-uploaded PDFs (local, gitignored)
-└── qdrant_storage/         # Qdrant on-disk data (local, gitignored)
+│   ├── pdfs/                   # Sample documents for eval
+│   └── results/                # Eval output (gitignored)
+├── pyproject.toml              # Dependencies (uv)
+├── uv.lock                     # Locked dependency versions
+├── uploads/                    # User-uploaded PDFs (local, gitignored)
+└── qdrant_storage/             # Qdrant on-disk data (local, gitignored)
 ```
 
 ### File reference
 
 | File | Purpose |
 |------|---------|
-| `main.py` | Backend entry point. Registers `rag_ingest_pdf` and `rag_query_pdf_ai` Inngest functions |
+| `app/main.py` | Backend entry point. Registers `rag_ingest_pdf` and `rag_query_pdf_ai` Inngest functions |
 | `streamlit_app.py` | Frontend: PDF upload, question form, Inngest event polling |
-| `data_loader.py` | `load_and_chunk_pdf()`, `embed_texts()` |
-| `vector_db.py` | `QdrantStorage` — auto-creates `docs` collection, upsert + `query_points` search |
-| `custom_types.py` | `RAGChunkAndSrc`, `RAGUpsertresult`, `RAGSearchResult`, `RetrievedChunk`, `RAGQueryResult` |
+| `app/data_loader.py` | `load_and_chunk_pdf()`, `embed_texts()` |
+| `app/vector_db.py` | `QdrantStorage` — auto-creates `docs` collection, upsert + `query_points` search |
+| `app/custom_types.py` | `RAGChunkAndSrc`, `RAGUpsertresult`, `RAGSearchResult`, `RetrievedChunk`, `RAGQueryResult` |
 | `eval/eval_harness.py` | End-to-end eval: ingest sample PDFs, run Q&A, score retrieval + answers |
 
 ---
@@ -256,7 +258,7 @@ The ingest function (`rag_ingest_pdf`) has two limits to prevent runaway embeddi
 |---------|------|---------|
 | Qdrant | 6333 | `docker run -p 6333:6333 qdrant/qdrant` |
 | Inngest dev | 8288 | `inngest dev` |
-| FastAPI | 8000 | `uv run uvicorn main:app` |
+| FastAPI | 8000 | `uv run uvicorn app.main:app` |
 | Streamlit | 8501 | `uv run streamlit run streamlit_app.py` |
 
 You can shut down Qdrant and FastAPI while keeping Inngest running — it will just sit idle until the backend is back.
