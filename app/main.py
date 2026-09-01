@@ -9,9 +9,9 @@ import uuid  # to generate unique IDs
 import os
 import datetime
 
-from data_loader import load_and_chunk_pdf, embed_texts
-from vector_db import QdrantStorage
-from custom_types import RAGChunkAndSrc, RAGUpsertresult, RAGSearchResult, RAGQueryResult
+from app.data_loader import load_and_chunk_pdf, embed_texts
+from app.vector_db import QdrantStorage
+from app.custom_types import RAGChunkAndSrc, RAGUpsertresult, RAGSearchResult, RAGQueryResult
 
 load_dotenv() # load environment variables from .env file
 
