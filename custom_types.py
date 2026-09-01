@@ -8,6 +8,11 @@ class RAGChunkAndSrc(pydantic.BaseModel):
 class RAGUpsertresult(pydantic.BaseModel):
     ingested: int
 
+class RetrievedChunk(pydantic.BaseModel):
+    text: str
+    source: str
+    score: float
+
 class RAGSearchResult(pydantic.BaseModel):
     contexts: list[str]
     sources: list[str]
