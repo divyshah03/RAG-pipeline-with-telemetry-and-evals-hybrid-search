@@ -16,6 +16,8 @@ class RetrievedChunk(pydantic.BaseModel):
 class RAGSearchResult(pydantic.BaseModel):
     contexts: list[str]
     sources: list[str]
+    scores: list[float]
+    retrieved: list[RetrievedChunk] = []
 
 class RAGQueryResult(pydantic.BaseModel):
     answer: str
