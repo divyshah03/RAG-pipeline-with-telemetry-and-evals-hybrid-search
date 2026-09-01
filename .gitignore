@@ -224,5 +224,11 @@ __marimo__/
 # Qdrant local storage (runtime database; recreate by ingesting)
 qdrant_storage/
 
+# User-uploaded PDFs from Streamlit (local runtime data)
+uploads/
+
+# Claude Code local settings
+.claude/
+
 # Eval harness output (regenerate by re-running eval/eval_harness.py)
 eval/results/*.json
