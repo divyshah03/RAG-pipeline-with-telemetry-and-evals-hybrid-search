@@ -15,6 +15,7 @@ dependencies = [
     "openai>=3.3.1",
     "python-dotenv>=1.2.3",
     "qdrant-client>=1.19.0",
+    "requests>=2.34.2",
     "streamlit>=1.62.0",
     "uvicorn>=0.52.4",
 ]
@@ -25,3 +26,8 @@ ragproductionapp = "ragproductionapp:main"
 [build-system]
 requires = ["uv_build>=0.12.2,<0.13.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "fpdf2>=2.8.8",
+]
